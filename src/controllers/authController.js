@@ -1,11 +1,13 @@
 const { generateToken } = require('../utils/jwt');
 const bcrypt = require('bcryptjs');
-const { registration } = require('../utils/validation');
+const User = require('../models/User');
+const { registrationSchema, loginSchema } = require('../utils/validation');
 
 
 const regist = async (req, res) =>{
     try{
-        const{error} = registration.validate(req.body);
+        
+        const{error} = registrationSchema.validate(req.body);
         if(error){
             return res.status(400).json({
                 status: 102,
@@ -13,10 +15,10 @@ const regist = async (req, res) =>{
                 data: null
             });
         }
+
         const{email,first_name, last_name, password} = req.body;
 
-        const existingUser = await User.findByemail(email);
-
+        const existingUser = await User.findByEmail(email);
         if(existingUser){
             return res.status(409).json({
                 status: 409,
@@ -27,8 +29,7 @@ const regist = async (req, res) =>{
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = await User.create({
+        await User.create({
             email,
             first_name,
             last_name,
@@ -52,19 +53,19 @@ const regist = async (req, res) =>{
 
 const login = async (req, res) => {
     try {
-        const{error} = login.validate(req.body);
+        const{error} = loginSchema.validate(req.body);
         if (error){
             return res.status(400).json({
                 status: 102,
-                message: 'Paramter email tidak sesuai format',
+                message: 'Parameter email atau password tidak sesuai format',
                 data: null
             });
         }
 
         const { email, password } = req.body;
         
-        const user = await User.findByemail(email);
-        if(!email){
+        const user = await User.findByEmail(email);
+        if(!user){
             return res.status(401).json({
                 status: 103,
                 message: 'Username atau password salah',
@@ -102,15 +103,6 @@ const login = async (req, res) => {
     }
 };
 
-const profile = (req, res) => {
-    res.json({
-        status: 0,
-        message: 'Sukses',
-        data: {
-            userId: req.user.userId,
-            email: req.user.email
-        }
-    });
-};
 
-module.exports = { login, profile };
+
+module.exports = { regist ,login };
