@@ -35,6 +35,25 @@ class Transaction {
     const timestamp = Date.now();
     return `INV${year}${month}${day}-${timestamp}`;
   }
+
+  static async getHistoryTransection(email, limit = null) {
+    let query = `
+      SELECT invoice_number, transaction_type, service_code, service_name, total_amount, created_on 
+      FROM transactions t JOIN users u ON t.user_id = u.id 
+      WHERE u.email = $1
+      ORDER BY t.created_on DESC
+    `;
+
+    const values = [email];
+
+    if (limit) {
+      query += ' LIMIT $2';
+      values.push(limit);
+    }
+
+    const result = await pool.query(query, values);
+    return result.rows;
+  }
 }
 
 module.exports = Transaction;

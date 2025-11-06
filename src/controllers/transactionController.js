@@ -18,7 +18,7 @@ const getBalance = async (req, res) => {
             status: 0,
             message: 'Get Balance Berhasi',
             data: {
-                balance: user.balance
+                balance: parseInt(user.balance)
             }
         });
 
@@ -46,7 +46,7 @@ const topup = async (req, res) => {
         const { top_up_amount } = req.body;
 
         // Create transaction record
-        const transaction = await Transaction.create({
+        const transaction = await Transaction.createTransection({
             user_email: req.user.email,
             invoice_number: Transaction.generateInvoiceNumber(),
             service_code: null,
@@ -62,7 +62,7 @@ const topup = async (req, res) => {
             status: 0,
             message: 'Top Up Balance berhasil',
             data: {
-                balance: updatedBalance.balance
+                balance: parseInt(updatedBalance.balance)
             }
         });
 
@@ -109,7 +109,7 @@ const createTransaction = async (req, res) => {
     }
 
     // Check if balance 
-    if (user.balance < service.service_tariff) {
+    if (parseFloat(user.balance) < parseFloat(service.service_tariff)) {
       return res.status(400).json({
         status: 102,
         message: 'Saldo tidak mencukupi',
@@ -121,7 +121,7 @@ const createTransaction = async (req, res) => {
     const invoice_number = Transaction.generateInvoiceNumber();
 
     // Create transaction member
-    const transaction = await Transaction.create({
+    const transaction = await Transaction.createTransection({
       user_email: req.user.email,
       invoice_number,
       service_code: service.service_code,
@@ -130,9 +130,9 @@ const createTransaction = async (req, res) => {
       total_amount: service.service_tariff
     });
 
+
     // Update user balance
     await User.updateBalanceByEmail(req.user.email, service.service_tariff, 'subtract');
-
     res.status(200).json({
       status: 0,
       message: 'Transaksi berhasil',
@@ -156,6 +156,35 @@ const createTransaction = async (req, res) => {
   }
 };
 
+const getTransactionHistory = async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const email = req.user.email; // dari JWT payload
+    
+    const transactions = await Transaction.getHistoryTransection(
+      email, 
+      limit ? parseInt(limit) : null
+    );
+
+    res.status(200).json({
+      status: 0,
+      message: 'Get History Berhasil',
+      data: {
+        offset: 0,
+        limit: limit ? parseInt(limit) : transactions.length,
+        records: transactions
+      }
+    });
+
+  } catch (error) {
+    console.error('Get transaction history error:', error);
+    res.status(500).json({
+      status: 500,
+      message: 'Internal server error',
+      data: null
+    });
+  }
+};
 
 
-module.exports = {getBalance, topup, createTransaction  };
+module.exports = {getBalance, topup, createTransaction, getTransactionHistory  };
