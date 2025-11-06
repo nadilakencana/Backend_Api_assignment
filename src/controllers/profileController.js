@@ -3,7 +3,7 @@ const { profileUpdateSchema, profileImageUpdateSchema } = require('../utils/vali
 
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findByEmail(req.user.email);
     if (!user) {
       return res.status(404).json({
         status: 404,
@@ -45,7 +45,7 @@ const updateProfile = async (req, res) => {
     }
 
     const { first_name, last_name } = req.body;
-    const updatedUser = await User.updateProfile(req.user.userId, { first_name, last_name });
+    const updatedUser = await User.updateProfile(req.user.email, { first_name, last_name });
 
     res.status(200).json({
       status: 0,
@@ -67,6 +67,7 @@ const updateProfile = async (req, res) => {
     });
   }
 };
+
 const updateProfileImage = async (req, res) => {
     try {
         console.log('Request file:', req.file);
@@ -80,14 +81,10 @@ const updateProfileImage = async (req, res) => {
             });
         }
 
-        const userId = req.user.userId;
         const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         
         // Update profile image di database
-        await User.updateProfileImage(userId, imageUrl);
-        
-        
-        const updatedUser = await User.findById(userId);
+        const updatedUser = await User.updateProfileImage(req.user.email, imageUrl);
         
         res.json({
             status: 0,
@@ -109,5 +106,6 @@ const updateProfileImage = async (req, res) => {
         });
     }
 };
+
 
 module.exports = { getProfile,updateProfile,updateProfileImage };

@@ -5,8 +5,11 @@ const upload = require('../middleware/upload');
 
 const router = express.Router();
 
+// profile
 router.put('/image', authenticateToken, upload.single('profile_image'), updateProfileImage);
 router.get('/profile', authenticateToken, getProfile);
 router.put('/update', authenticateToken, updateProfile);
+
+
 
 module.exports = router;

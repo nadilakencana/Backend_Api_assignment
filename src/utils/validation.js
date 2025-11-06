@@ -8,8 +8,14 @@ const registrationSchema = joi.object({
 });
 
 const loginSchema = joi.object({
-    email: joi.string().email().required(),
-    password: joi.string().min(8).required()
+    email: joi.string().email().required().messages({
+        'string.email': 'Parameter email tidak sesuai format',
+        'any.required': 'Parameter email harus diisi'
+    }),
+    password: joi.string().min(8).required().messages({
+        'string.min': 'Password minimal 8 karakter',
+        'any.required': 'Parameter password harus diisi'
+    })
 });
 
 const profileUpdateSchema = joi.object({

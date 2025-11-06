@@ -3,8 +3,6 @@
 -- Create database
 CREATE DATABASE nutech_db;
 
--- Use database
-\c nutech_db;
 
 -- Users table
 CREATE TABLE users (
@@ -45,7 +43,7 @@ CREATE TABLE transactions (
     invoice_number VARCHAR(100) UNIQUE NOT NULL,
     service_code VARCHAR(50),
     service_name VARCHAR(100),
-    transaction_type VARCHAR(20) NOT NULL, -- 'TOPUP' or 'PAYMENT'
+    transaction_type VARCHAR(20) NOT NULL,
     total_amount DECIMAL(15,2) NOT NULL,
     created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

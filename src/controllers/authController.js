@@ -53,11 +53,11 @@ const regist = async (req, res) =>{
 
 const login = async (req, res) => {
     try {
-        const{error} = loginSchema.validate(req.body);
-        if (error){
+        const { error } = loginSchema.validate(req.body);
+        if (error) {
             return res.status(400).json({
                 status: 102,
-                message: 'Parameter email atau password tidak sesuai format',
+                message: error.details[0].message,
                 data: null
             });
         }
@@ -65,17 +65,16 @@ const login = async (req, res) => {
         const { email, password } = req.body;
         
         const user = await User.findByEmail(email);
-        if(!user){
+        if (!user) {
             return res.status(401).json({
                 status: 103,
                 message: 'Username atau password salah',
                 data: null
             });
         }
-
 
         const isValidPassword = await bcrypt.compare(password, user.password);
-        if(!isValidPassword){
+        if (!isValidPassword) {
             return res.status(401).json({
                 status: 103,
                 message: 'Username atau password salah',
@@ -83,7 +82,7 @@ const login = async (req, res) => {
             });
         }
 
-        const token = generateToken({ userId: user.id, email: user.email });
+        const token = generateToken({ email: user.email });
 
         res.status(200).json({
             status: 0,
@@ -93,8 +92,8 @@ const login = async (req, res) => {
             }
         });
 
-
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({
             status: 500,
             message: 'Internal server error',
