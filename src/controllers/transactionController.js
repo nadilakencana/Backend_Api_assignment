@@ -45,7 +45,6 @@ const topup = async (req, res) => {
 
         const { top_up_amount } = req.body;
 
-        // Create transaction record
         const transaction = await Transaction.createTransection({
             user_email: req.user.email,
             invoice_number: Transaction.generateInvoiceNumber(),
@@ -55,7 +54,6 @@ const topup = async (req, res) => {
             total_amount: top_up_amount
         });
 
-        // Update user balance
         const updatedBalance = await Transaction.topup(req.user.email, top_up_amount);
 
         res.status(200).json({

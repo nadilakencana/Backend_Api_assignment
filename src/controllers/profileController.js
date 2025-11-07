@@ -70,8 +70,6 @@ const updateProfile = async (req, res) => {
 
 const updateProfileImage = async (req, res) => {
     try {
-        console.log('Request file:', req.file);
-        console.log('Request body:', req.body);
         
         if (!req.file) {
             return res.status(400).json({
@@ -83,7 +81,6 @@ const updateProfileImage = async (req, res) => {
 
         const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         
-        // Update profile image di database
         const updatedUser = await User.updateProfileImage(req.user.email, imageUrl);
         
         res.json({
