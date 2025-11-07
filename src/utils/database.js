@@ -4,6 +4,7 @@ require('dotenv').config();
 
 console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'SET' : 'NOT SET');
 console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('Full DATABASE_URL:', process.env.DATABASE_URL);
 console.log('Connection string starts with:', process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 15) : 'NONE');
 
 // Force new pool creation
