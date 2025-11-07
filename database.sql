@@ -1,4 +1,3 @@
--- DDL Database Design for Nutech API Assignment
 
 -- Create database
 CREATE DATABASE nutech_db;
@@ -72,7 +71,7 @@ INSERT INTO banners (banner_name, banner_image, description) VALUES
 ('Banner 5', 'https://nutech-integrasi.app/dummy.jpg', 'Lerem Ipsum Dolor sit amet'),
 ('Banner 6', 'https://nutech-integrasi.app/dummy.jpg', 'Lerem Ipsum Dolor sit amet');
 
--- Create indexes for better performance
+-- Create indexes 
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_transactions_invoice ON transactions(invoice_number);
